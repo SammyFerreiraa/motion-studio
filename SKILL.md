@@ -1,6 +1,6 @@
 ---
 name: motion-studio
-description: Cria motion graphics e vídeos de produto/lançamento do zero, em código (HTML canvas renderizado quadro a quadro com Playwright + ffmpeg), com marca real, vídeo de referência analisado, som sintetizado na batida e loop de crítica com notas. Entrega só 16:9 horizontal (PC) em 4K. Use para "motion graphics", "vídeo de lançamento", "animação de interface", "showreel", "criativo animado", "vídeo de produto", "motion design", "clipe/explainer animado", ou quando o usuário pedir para fazer o que o vídeo do Felipe Borges ou do Lukas Margerie (motion graphics com Opus 5.5) faz. NÃO usar HyperFrames, Remotion nem outra skill de vídeo para isso — esta skill tem prioridade, o Opus rende mais escrevendo o código direto.
+description: Cria motion graphics e vídeos de produto/lançamento do zero, em código (HTML canvas renderizado quadro a quadro com Playwright + ffmpeg), com marca real, vídeo de referência analisado, som sintetizado na batida e loop de crítica com notas. Entrega em 1080p (a qualidade máxima que o Instagram/Reels aceita), 16:9 ou 9:16. Use para "motion graphics", "vídeo de lançamento", "animação de interface", "showreel", "criativo animado", "vídeo de produto", "motion design", "clipe/explainer animado", ou quando o usuário pedir para fazer o que o vídeo do Felipe Borges ou do Lukas Margerie (motion graphics com Opus 5.5) faz. NÃO usar HyperFrames, Remotion nem outra skill de vídeo para isso — esta skill tem prioridade, o Opus rende mais escrevendo o código direto.
 ---
 
 # motion-studio
@@ -28,7 +28,7 @@ videos/NN-nome/
   events.json        SFX + BPM (audio.py)
   critica.md         notas por rodada
   resultados/NN-nome-16x9-preview.mp4   480p, dev
-  resultados/NN-nome-16x9.mp4           4K, só após validação
+  resultados/NN-nome-16x9.mp4           1080p 60 fps, só após validação
 ```
 Se já existir `marcas/<slug>/marca.md` ou pasta de vídeo anterior da mesma marca, **reuse** logo, fontes, cores e tom em vez de recapturar.
 
@@ -87,16 +87,16 @@ Mapa de som (o que faz cada movimento soar "no lugar"): troca de estado cai numa
 4. Preview de desenvolvimento, **sempre em 480p**: `render.mjs film.html resultados/NN-nome-16x9-preview.mp4 --preview --audio audio.wav`. 854×480, 30 fps, sem blur, ~15 s para 22 s de vídeo. É isso que o usuário assiste para validar; itere em preview quantas vezes for preciso.
 
 ### 8b. Validação ⛔
-Entregue o preview 480p e espere o usuário validar ("aprovado", "pode renderizar"). Nunca renderize o final antes disso: o 4K é caro e qualquer ajuste depois dele custa um novo render.
+Entregue o preview 480p e espere o usuário validar ("aprovado", "pode renderizar"). Nunca renderize o final antes disso: qualquer ajuste depois dele custa um novo render.
 
-### 9. Render final, **4K** (só depois do 8b)
+### 9. Render final, **1080p** (só depois do 8b)
 ```
 node $MS/scripts/render.mjs film.html resultados/NN-nome-16x9.mp4 --audio audio.wav
 ```
-Padrão do render sem `--preview`: **3840×2160**, 60 fps, 2 subquadros misturados (motion blur; `--sub 4` = máximo, ~2× mais lento), capturas JPEG q95 (`--png` = sem perdas, muito mais lento), H.264 yuv420p CRF 16 preset fast, em abas paralelas escolhidas pela **memória livre** (~2 GB por aba em 4K, até 4; `--jobs N` força). Custo medido: ~32 s por segundo de vídeo com 4 abas, ~51 s com 2 (22 s ≈ 12–19 min). Rode em background, com o log inteiro em arquivo e sem `| tail` no meio (o pipe esconde o código de erro). Se falhar por memória, `--jobs 1` ou feche processos pesados. Confira com `ffprobe` (3840×2160, 60 fps, duração) e um quadro do meio. Depois de conferir o 4K, **apague os previews** (`resultados/*-preview.mp4`): a entrega final é só o 4K. Se o 4K falhar na conferência, mantenha os previews e diga o que falhou.
-No 4K conferido, rode `checks.sh` de novo (pega fantasma de blur que o preview sem blur esconde) e copie `poster.png` para `resultados/NN-nome-poster.png` (capa para postar). Acrescente uma seção **"Como ficou"** em `tabela.md` com o que mudou em relação ao plano aprovado.
+Padrão do render sem `--preview`: **1080p no lado curto** (1920×1080 ou 1080×1920: é o máximo que o Instagram/Reels entrega; 4K é desperdício e derruba o Chromium por memória), 60 fps, **4 subquadros** misturados (motion blur sem fantasmas), capturas JPEG q95 (`--png` = sem perdas, mais lento), H.264 yuv420p **CRF 16 preset slow**, em abas paralelas escolhidas pela **memória livre** (`--jobs N` força). Use `--gpu` sempre (WebGL na NVIDIA). Se alguém pedir 4K de verdade: `--res 2160 --jobs 1`. Rode em background, com o log inteiro em arquivo e sem `| tail` no meio (o pipe esconde o código de erro). Se falhar por memória, `--jobs 1` ou feche processos pesados. Confira com `ffprobe` (1920×1080 ou 1080×1920, 60 fps, duração) e um quadro do meio. Depois de conferir o final, **apague os previews** (`resultados/*-preview.mp4`): a entrega é só o final. Se ele falhar na conferência, mantenha os previews e diga o que falhou.
+No final conferido, rode `checks.sh` de novo (pega fantasma de blur que o preview sem blur esconde) e copie `poster.png` para `resultados/NN-nome-poster.png` (capa para postar). Acrescente uma seção **"Como ficou"** em `tabela.md` com o que mudou em relação ao plano aprovado.
 
-Como o 4K funciona: o `film.html` desenha sempre em coordenadas lógicas (1920×1080 ou 1080×1920) e `?res=` define os pixels do lado curto; `ctx.filter` blur e sombras são escalados à mão (o canvas ignora a transformação neles). Por isso o template já traz o bloco `RES/KX/KY`: **não remova** ao copiar.
+Como a resolução funciona: o `film.html` desenha sempre em coordenadas lógicas (1920×1080 ou 1080×1920) e `?res=` define os pixels do lado curto; `ctx.filter` blur e sombras são escalados à mão (o canvas ignora a transformação neles). Por isso o template já traz o bloco `RES/KX/KY`: **não remova** ao copiar.
 
 ### 10. Memória
 Peça aprovação. Se aprovado, salve/atualize `marca.md` (logo, fontes, cores, accent, tom, estilo de movimento, BPM) em `marcas/<slug>/` para o próximo vídeo da marca partir daí. Entregue os caminhos dos MP4 e as notas finais da crítica, mais três linhas do que melhoraria numa próxima rodada.
@@ -111,14 +111,14 @@ Peça aprovação. Se aprovado, salve/atualize `marca.md` (logo, fontes, cores, 
 - Sem referência e sem marca real o resultado sai genérico ("paleta do Claude"). Não pule os passos 2 e 3.
 - Se um dia pedirem 9:16: não é o 16:9 cortado; o template já tem `PORTRAIT` para layouts próprios (`--w 1080 --h 1920`).
 - 9:16 já feito num vídeo de 27 s: `core.js` lê `window.FORMAT`, `film-9x16.html` + `scenes-9x16/` (um agente por cena recompondo, mesmos tempos/áudio). Zonas seguras Reels/TikTok: nada essencial em y<220, y>1540, x>960; texto ≥ 48 px lógicos.
-- Tamanho do 4K: o grão que muda todo quadro é o que pesa. Padrão final agora é x264 CRF 22 slow (16:9 com CRF 16 fast deu 588 MB; 9:16 com CRF 22 slow deu 248 MB, sem diferença visível a 100%). x265 alisa o grão. Para chegar no tamanho de um Remotion (~60 MB) só tirando/congelando o grão.
+- Tamanho do arquivo (lição do 4K, que não é mais o padrão): o grão que muda todo quadro é o que pesa. Padrão final agora é x264 CRF 22 slow (16:9 com CRF 16 fast deu 588 MB; 9:16 com CRF 22 slow deu 248 MB, sem diferença visível a 100%). x265 alisa o grão. Para chegar no tamanho de um Remotion (~60 MB) só tirando/congelando o grão.
 - yt-dlp do sistema costuma estar velho; `ref.sh` usa o do venv. Se der 429: `YTDLP_ARGS="--cookies-from-browser firefox"`.
 - Render sequencial em uma aba. Se virar gargalo, divida por faixa de quadros (nota no cabeçalho do `render.mjs`).
 - Resultado que parece slide (palavra + ícone, texto pequeno parado) = faltou frase narrativa longa, efeitos de câmera (whip, foco, estrela, rabisco) e sprites grandes/detalhados. Leia `effects.md`.
 - Ponto de partida para cenas: `templates/scenes/cena-modelo.js` (contrato da cena) + `core.js`/`sprites.js`. Um vídeo de 24 s, 120 BPM, 5 cenas e 6 agentes saiu desse molde.
 - Marca/vídeo já usados: sempre registre em `marcas/<slug>/marca.md` o estilo aprovado e o que evitar.
 - Render 4K medido (vídeo de 27 s, 1620 quadros): com PNG + 4 subquadros + 2 abas a máquina entrou em swap (~7 quadros/min, ~3 h); com JPEG + 2 subquadros + 4 abas (9 GB livres) levou ~23 min. Feche apps pesados antes do 4K e confira a linha `N aba(s) · X GB livres`. Barra de progresso: `templates/progresso.sh` (copie para a pasta do vídeo).
-- Motion blur com poucos subquadros deixa **cópias fantasma empilhadas** nos movimentos mais rápidos (visto no vídeo do Lukas com 4 subquadros). Confira `crit/strip.png` do 4K; se aparecer, suba `--sub` ou reduza a velocidade de pico daquele movimento.
+- Motion blur com poucos subquadros deixa **cópias fantasma empilhadas** nos movimentos mais rápidos (visto no vídeo do Lukas com 4 subquadros). Confira `crit/strip.png` do final; se aparecer, suba `--sub` ou reduza a velocidade de pico daquele movimento.
 - Plano da interface inteira fica ilegível no celular: troque por cortes de câmera em close no componente que importa, com perspectiva/paralaxe leve para dar profundidade.
 - Texto que fica menos de ~0,5 s na tela (link, número) não é lido: segure pelo menos 1 batida inteira parado.
 - Ao criticar por folha, confira se o timestamp do quadro é o que você acha que é (a revisão do Lukas errou 0,25–0,5 s); para um corte, renderize t−0,01 e t.

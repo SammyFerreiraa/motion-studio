@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Renderiza um film.html (que expõe window.seek(t)) quadro a quadro.
 //   Preview (dev):  node render.mjs film.html out.mp4 --preview            → 480p, 30 fps, sem blur
-//   Final (4K):     node render.mjs film.html out.mp4                      → 2160p, 60 fps, 2 subquadros, JPEG q95, x264 CRF 22 slow (só após validação)
+//   Final (Reels):  node render.mjs film.html out.mp4                      → 1080p (qualidade máxima do Instagram/Reels), 60 fps, 4 subquadros, JPEG q95, x264 CRF 16 slow (só após validação)
+//   4K só se pedirem: --res 2160 (Instagram entrega no máximo 1080×1920; 4K é desperdício e derruba o Chromium por memória)
 //   CRF 22 slow: 4K com grão ≈ 1/3 do CRF 16 fast, sem diferença visível a 100% (medido num vídeo de 27 s); x265 alisa o grão, não use
 //   Opções:         --w 1920 --h 1080 (layout lógico; 9:16 = --w 1080 --h 1920) --res <lado curto> --fps --sub --dur
 //                   --audio a.wav --crf --preset --jobs N (abas em paralelo) --sub N (subquadros de blur) --png (capturas sem perdas)
@@ -26,11 +27,11 @@ for (let i = 0; i < rest.length; i++) {
 const out = pos[0];
 const W = +A.w || 1920, H = +A.h || 1080;
 const preview = !!A.preview;
-const RES = +A.res || (A.sheet ? 1080 : preview ? 480 : 2160);
+const RES = +A.res || (A.sheet ? 1080 : preview ? 480 : 1080);   // final: 1080 no lado curto = máximo que o Instagram entrega
 const even = (x) => Math.round(x / 2) * 2;
 const OW = even(W * RES / Math.min(W, H)), OH = even(H * RES / Math.min(W, H)); // mesma conta do film.html
 const fps = +A.fps || (preview ? 30 : 60);
-const sub = +A.sub || (preview ? 1 : 2);   // 2 subquadros: blur suave com metade das capturas (--sub 4 = blur máximo, ~2× mais lento)
+const sub = +A.sub || (preview ? 1 : 4);   // 4 subquadros no final (blur sem fantasmas); em 1080p custa pouco. --sub 2 = metade do tempo
 const JPEG = !A.png;                        // capturas JPEG q95 (rápido e leve); --png para PNG sem perdas (bem mais lento em 4K)
 // Abas em paralelo: limitadas por CPU e pela memória livre (cada aba 4K + encoder x264 ≈ 2 GB).
 const availGB = (() => { try { return +fs.readFileSync('/proc/meminfo', 'utf8').match(/MemAvailable:\s+(\d+)/)[1] / 1048576; } catch { return os.freemem() / 1073741824; } })();
@@ -112,8 +113,8 @@ async function segment(j, page) {
   if (sub > 1) ff.push('-vf', `tmix=frames=${sub},select='eq(mod(n\\,${sub})\\,${sub - 1})',setpts=N/(${fps}*TB)`);
   // --nvenc: compressão na NVIDIA (libera a CPU); --crf vira -cq com a mesma escala aproximada. Medido: só ~20 % mais rápido e arquivo ~5× maior que o x264; não use no final.
   if (A.nvenc) ff.push('-r', String(fps), '-c:v', 'h264_nvenc', '-pix_fmt', 'yuv420p', '-preset', 'p7', '-tune', 'hq', '-rc', 'vbr',
-    '-cq', String(A.crf || (preview ? 26 : 22)), '-b:v', '0', '-spatial-aq', '1', '-temporal-aq', '1', seg);
-  else ff.push('-r', String(fps), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', String(A.crf || (preview ? 26 : 22)),
+    '-cq', String(A.crf || (preview ? 26 : 16)), '-b:v', '0', '-spatial-aq', '1', '-temporal-aq', '1', seg);
+  else ff.push('-r', String(fps), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', String(A.crf || (preview ? 26 : 16)),
     '-preset', A.preset || (preview ? 'veryfast' : 'slow'), '-threads', String(x264threads), '-x264-params', 'rc-lookahead=20', seg);
   const enc = spawn('ffmpeg', ff, { stdio: ['pipe', 'inherit', 'inherit'] });
   const closed = new Promise((res, rej) => { enc.on('close', (c) => (c ? rej(new Error('ffmpeg ' + c)) : res())); });

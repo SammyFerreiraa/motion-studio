@@ -6,7 +6,7 @@ Origem: o `CLAUDE.md` mostrado no vídeo do Felipe Borges (parte visível na tel
 - Todo filme é uma função pura do tempo: `window.seek(t)` pinta o quadro `t`. Nada mais.
 - Sem CSS transition, `setTimeout`, `requestAnimationFrame`, `Date.now` nem `Math.random` na renderização. Sem estado carregado entre quadros. Aleatoriedade só com semente (`mulberry32`).
 - Molas em forma fechada. Um valor com vários alvos = soma de uma mola por mudança (`sv()` do template). Amortecimento ζ≈0,82 (~1% de rebote no máximo).
-- Render com `scripts/render.mjs`: preview de desenvolvimento em **480p** (30 fps, sem blur); final em **4K** (2160p, 60 fps, 4 subquadros misturados = motion blur, H.264 `yuv420p`, CRF 16) **só depois que o usuário validar o preview**.
+- Render com `scripts/render.mjs`: preview de desenvolvimento em **480p** (30 fps, sem blur); final em **1080p** (lado curto 1080 = máximo do Instagram/Reels; 60 fps, 4 subquadros misturados = motion blur, H.264 `yuv420p`, CRF 16 slow, `--gpu`) **só depois que o usuário validar o preview**.
 - Desenhe sempre em coordenadas lógicas (1920×1080); a resolução vem de `?res=`. Nada de tamanhos fixos em pixels de saída.
 - Fontes e imagens carregadas em `window.READY`; nunca dependa de rede durante o render (salve em `assets/`).
 - Primeiro quadro = último quadro, incluindo posição e velocidade do cursor.
@@ -18,7 +18,7 @@ Origem: o `CLAUDE.md` mostrado no vídeo do Felipe Borges (parte visível na tel
 - A cada 2–4 s algo novo acontece na tela; em vídeos com batida, algo acontece em toda batida.
 - Um contêiner que nunca corta (estilo filme de produto): cada estado é o mesmo elemento mudando tamanho, raio e preenchimento; o conteúdo troca atrás de um desfoque curto, entrando **depois** que a transformação começa e saindo **antes** da próxima. Um cursor conduz cada mudança.
 - **Nunca redesenhe a interface do produto de imaginação.** Recorte e anime capturas reais. Logo, cores e fontes vêm da marca real (`assets/`, `marca.md`).
-- Formato: só 16:9 horizontal (PC), 1920×1080 lógico, entregue em 4K. 9:16 só se pedirem.
+- Formato: 16:9 (1920×1080 lógico) ou 9:16 (1080×1920 lógico, `--w 1080 --h 1920`), entregue em 1080p. 4K só se pedirem (`--res 2160`).
 
 ## Som
 - Trilha e SFX são sintetizados em código (`scripts/audio.py`), salvo se uma trilha for fornecida.

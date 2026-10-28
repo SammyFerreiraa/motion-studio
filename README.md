@@ -8,7 +8,7 @@ O prompt é uma parte pequena do resultado. O resto é método:
 - **Marca real do site.** `brand.mjs` captura telas, logo, cores, fontes e textos do site do produto com Playwright. A interface não é redesenhada de imaginação.
 - **Tabela de batidas.** Antes de qualquer código, cada estado do filme é posto numa grade de BPM e compassos, com o som de cada momento.
 - **Som no BPM.** Trilha e efeitos sonoros são sintetizados em código no BPM da tabela, então os hits caem exatos. Voz gravada (opcional) vira o relógio do filme.
-- **Render 4K quadro a quadro** com Playwright + ffmpeg: 3840x2160, 60 fps, motion blur por subquadros. Preview em 480p para iterar barato.
+- **Render quadro a quadro** com Playwright + ffmpeg: 1080p (o máximo que o Instagram/Reels entrega), 60 fps, motion blur por 4 subquadros, CRF 16. Preview em 480p para iterar barato. 4K só se pedir.
 - **Loop de crítica.** O Claude renderiza folhas de contato, dá notas por critério (gancho, legibilidade no celular, movimento, marca, som...) e corrige os piores problemas antes de mostrar qualquer coisa.
 
 ## Para quem
@@ -37,7 +37,7 @@ Depois abra o Claude Code numa pasta de trabalho e peça:
 
 ## Como funciona
 
-O fluxo para nos pontos marcados com ⛔ e espera sua aprovação. Assim o que é barato (texto, tabela, preview) é decidido antes do que é caro (render 4K).
+O fluxo para nos pontos marcados com ⛔ e espera sua aprovação. Assim o que é barato (texto, tabela, preview) é decidido antes do que é caro (render final).
 
 1. **Intake**: produto, URL, emoção, duração, BPM, voz, referência. O filme vira uma linha.
 2. **Referência**: download, folhas de quadros, `guia-estilo.md` e `planos.md`. ⛔ Sem referência, o Claude sugere três. ⛔
@@ -47,7 +47,7 @@ O fluxo para nos pontos marcados com ⛔ e espera sua aprovação. Assim o que �
 6. **Código**: `film.html` monolítico, ou cenas separadas feitas por subagentes em paralelo para vídeos maiores.
 7. **Som**: trilha + SFX no BPM, mixados a -14 LUFS.
 8. **Crítica**: folhas, notas, correções, checagens (fantasmas de blur, leitura no celular, loop, determinismo) e preview 480p. ⛔ Você valida o preview.
-9. **Render final 4K**, conferido com ffprobe e quadro a quadro.
+9. **Render final em 1080p**, conferido com ffprobe e quadro a quadro.
 10. **Memória da marca**: `marcas/<slug>/marca.md` para o próximo vídeo partir daí.
 
 ## Estrutura

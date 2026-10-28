@@ -77,8 +77,8 @@ Cada vídeo vive na sua pasta `videos/NN-nome/` (ignorada pelo git).
 
 ## Avisos
 
-- **Render é caro.** O 4K leva da ordem de 30 a 50 s de máquina por segundo de vídeo. Por isso o fluxo itera em preview 480p e só renderiza o final depois da sua validação.
-- **Memória.** Cada aba do Chromium em 4K usa cerca de 2 GB. O `render.mjs` escolhe o número de abas pela memória livre; feche apps pesados antes do render final. Em máquinas de 16 GB, use `--jobs 1` se travar.
+- **Render é caro.** O final em 1080p com 4 subquadros leva alguns segundos de máquina por segundo de vídeo (com GPU, bem menos). Por isso o fluxo itera em preview 480p e só renderiza o final depois da sua validação.
+- **Memória.** Cada aba do Chromium usa de 0,7 GB (1080p) a 2 GB (4K). O `render.mjs` escolhe o número de abas pela memória livre; feche apps pesados antes do render final. Se uma aba cair ("Target page closed"), rode com `--jobs 1`.
 - **Referência é só gramática.** A skill estuda ritmo, transições e tipografia da referência e nunca copia texto, personagens, logos, cenas ou música de terceiros. Os direitos do vídeo de referência continuam sendo de quem fez.
 - Saída padrão: 16:9 horizontal. 9:16 é possível, mas precisa de layout próprio.
 
@@ -111,6 +111,6 @@ bash ~/.claude/skills/motion-studio/scripts/setup.sh
 
 Then open Claude Code and ask: "make a motion video of my product with this reference <url>".
 
-**Caveats:** 4K rendering is slow and memory-hungry (~2 GB per Chromium tab); iterate on the 480p preview. Reference videos are used for grammar only; never copy third-party content.
+**Caveats:** the final render defaults to 1080p (Instagram's maximum), 60 fps, 4 sub-frames; 4K is opt-in (`--res 2160`) and memory-hungry (~2 GB per Chromium tab); iterate on the 480p preview. Reference videos are used for grammar only; never copy third-party content.
 
 License: MIT. Author: Sammy Ferreira (@caixadaia).

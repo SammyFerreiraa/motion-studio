@@ -1,0 +1,18 @@
+{
+  "bpm": 120,
+  "dur": 16,
+  "score": true,
+  "key": 0,
+  "voice_t0": 0,
+  "events": [
+    { "t": 3.9, "sfx": "whoosh" },
+    { "t": 3.95, "sfx": "pop" },
+    { "t": 5.0, "sfx": "type" },
+    { "t": 5.2, "sfx": "type" },
+    { "t": 5.4, "sfx": "type" },
+    { "t": 6.5, "sfx": "riser", "len": 1.4 },
+    { "t": 7.9, "sfx": "click" },
+    { "t": 7.95, "sfx": "success" },
+    { "t": 13.9, "sfx": "thud" }
+  ]
+}

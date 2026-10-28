@@ -1,0 +1,23 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script src="core.js"></script>
+<script src="sprites.js"></script>
+<script>window.SCENES = [];</script>
+<script src="scenes/s1-abertura.js"></script>
+<!-- uma linha por cena: scenes/sN-nome.js (copie de cena-modelo.js) -->
+<script>
+// Cada cena: SCENES.push({ id, t0, t1, init?(), draw(t), sfx:[{t,sfx,len?}] }). t é global (0–24 s). draw pinta o fundo inteiro.
+SCENES.sort((a, b) => a.t0 - b.t0);
+function draw(t) {
+  g.setTransform(KX, 0, 0, KY, 0, 0);
+  g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
+  for (const s of SCENES) if (t >= s.t0 && t < s.t1) { g.save(); s.draw(t); g.restore(); g.setTransform(KX, 0, 0, KY, 0, 0); }
+}
+window.SFX = () => ({ bpm: BPM, dur: window.DURATION, events: SCENES.flatMap((s) => s.sfx || []).sort((a, b) => a.t - b.t) });
+window.READY = Promise.all(FONTS.map(async ([fam, file, wt]) => {
+  const f = new FontFace(fam, `url(assets/fonts/${file}.woff2)`, { weight: wt }); await f.load(); document.fonts.add(f);
+})).then(() => { initSprites(); GRAIN = buildGrain(); for (const s of SCENES) s.init && s.init(); draw(0); });
+window.seek = (t) => draw(clamp(t, 0, window.DURATION));
+</script>

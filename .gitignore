@@ -1,0 +1,7 @@
+.venv/
+node_modules/
+videos/
+*.mp4
+*.wav
+crit/
+ref/

@@ -41,3 +41,6 @@ Referência é para estudar gramática (ritmo, transição, tipografia). Não re
 - Duração padrão de vídeo narrativo: **24 s** (12 compassos a 120 BPM). Quadro 0 = quadro final (papel + tracejado); grão com módulo `24*duração` quadros.
 - Sprites 32×32 sombreados; frase longa escrita ao longo do vídeo; cada cena começa e termina em corte seco em batida, a energia vem de whip/desfoque/flash dentro dos 0,3 s do corte.
 - Não nomeie helpers de cena com nomes de `core.js`/`sprites.js`.
+
+## Crítica com referência
+Além das notas padrão, **"clima = referência?"** (1–10): compare um quadro da referência com o quadro equivalente do filme em cada rodada. Fundo, peso do texto, objetos por plano e ritmo têm que bater; a marca é acento, não clima.

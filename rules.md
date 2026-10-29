@@ -44,3 +44,5 @@ Referência é para estudar gramática (ritmo, transição, tipografia). Não re
 
 ## Crítica com referência
 Além das notas padrão, **"clima = referência?"** (1–10): compare um quadro da referência com o quadro equivalente do filme em cada rodada. Fundo, peso do texto, objetos por plano e ritmo têm que bater; a marca é acento, não clima.
+
+**"estrutura = referência?"** (1–10): folha da referência e folha do filme lado a lado, um quadro por segundo. Cada plano da ref tem que ter o seu par no filme, na mesma ordem e com a mesma cadência (ver `mapa-ref.md`). Abertura pulada ou carrossel mais lento = nota ≤ 5.

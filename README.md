@@ -40,7 +40,7 @@ Depois abra o Claude Code numa pasta de trabalho e peça:
 O fluxo para nos pontos marcados com ⛔ e espera sua aprovação. Assim o que é barato (texto, tabela, preview) é decidido antes do que é caro (render final).
 
 1. **Intake**: produto, URL, emoção, duração, BPM, voz, referência. O filme vira uma linha.
-2. **Referência**: download, folhas de quadros, `guia-estilo.md` e `planos.md`. ⛔ Sem referência, o Claude sugere três. ⛔
+2. **Referência**: download, folhas de quadros densas, `mapa-ref.md` (cada plano da referência e o equivalente do seu produto: mesma abertura, ordem e cadência), `guia-estilo.md` com cores medidas e `planos.md`. ⛔ Sem referência, o Claude sugere três. ⛔
 3. **Marca real**: captura do site, `marca.md` com cor de destaque e componentes reais.
 4. **Tabela de batidas** com contêineres e efeitos sonoros por tempo. ⛔
 5. **Voz** (opcional): roteiro, você grava, a fala é transcrita palavra a palavra e a tabela se reajusta a ela. ⛔
@@ -98,7 +98,7 @@ Autor: Sammy Ferreira ([@caixadaia](https://instagram.com/caixadaia))
 
 **motion-studio** is a [Claude Code](https://claude.com/claude-code) skill for making motion graphics and product/launch videos **in code**. Claude does not generate video: it writes a program (a canvas `film.html` exposing `window.seek(t)`) and the program is rendered into video frame by frame.
 
-The method: a reference video is studied for its *grammar* (pacing, transitions, typography), never its content; the real brand is captured from the product's website with Playwright; every state is planned on a beat grid (BPM and bars) before any code; music and sound effects are synthesized in code on that BPM; the film renders to 4K 60 fps with motion blur via Playwright + ffmpeg; and Claude critiques its own contact sheets with scores before showing you anything. The flow stops at approval gates (⛔) so cheap decisions happen before expensive renders. The skill's instructions are written in Portuguese.
+The method: a reference video is studied for its *grammar* and mapped shot by shot (same opening, order and pacing; colors measured from it), never its content; the real brand is captured from the product's website with Playwright; every state is planned on a beat grid (BPM and bars) before any code; music and sound effects are synthesized in code on that BPM; the film renders to 1080p 60 fps with motion blur via Playwright + ffmpeg; and Claude critiques its own contact sheets with scores before showing you anything. The flow stops at approval gates (⛔) so cheap decisions happen before expensive renders. The skill's instructions are written in Portuguese.
 
 **Requirements:** Claude Code, ffmpeg, Node.js 20+, Python 3, Playwright/Chromium (installed by `setup.sh`). Optional NVIDIA GPU via `--gpu`.
 

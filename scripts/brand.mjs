@@ -51,7 +51,13 @@ const info = await page.evaluate(() => {
   };
 });
 
-if (info.logoSvg) fs.writeFileSync(path.join(dir, 'logo.svg'), info.logoSvg);
+// SVG inline costuma vir com width/height 100% ou sem tamanho: no canvas (drawImage) isso não desenha. Fixa pelo viewBox.
+if (info.logoSvg) {
+  let svg = info.logoSvg; const vb = svg.match(/viewBox="[\d.\-]+[ ,]+[\d.\-]+[ ,]+([\d.]+)[ ,]+([\d.]+)"/);
+  if (vb) svg = svg.replace(/<svg([^>]*)>/, (m, at) => `<svg${at.replace(/\s(width|height)="[^"]*"/g, '')} width="${vb[1]}" height="${vb[2]}">`);
+  if (!/xmlns=/.test(svg)) svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  fs.writeFileSync(path.join(dir, 'logo.svg'), svg);
+}
 for (const [name, u] of [['logo', info.logoImg], ['og', info.ogImage], ['favicon', info.favicon]]) {
   if (!u) continue;
   try { const r = await page.request.get(u); if (r.ok()) fs.writeFileSync(path.join(dir, `${name}${path.extname(new URL(u).pathname) || '.png'}`), await r.body()); } catch {}

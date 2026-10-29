@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 command -v ffmpeg >/dev/null || { echo "faltou ffmpeg"; exit 1; }
 command -v node >/dev/null || { echo "faltou node"; exit 1; }
 [ -d .venv ] || python3 -m venv .venv
-.venv/bin/pip install -q -U numpy "yt-dlp[default]"
+.venv/bin/pip install -q -U numpy pillow "yt-dlp[default]"   # pillow: medir cores da referência
 [ "${1:-}" = "--voice" ] && .venv/bin/pip install -q faster-whisper
 [ -d node_modules/playwright ] || npm install --silent
 # Chromium: reaproveita o cache do Playwright; só baixa se nada serve.

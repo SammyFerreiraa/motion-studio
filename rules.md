@@ -9,7 +9,7 @@ Origem: o `CLAUDE.md` mostrado no vídeo do Felipe Borges (parte visível na tel
 - Render com `scripts/render.mjs`: preview de desenvolvimento em **480p** (30 fps, sem blur); final em **1080p** (lado curto 1080 = máximo do Instagram/Reels; 60 fps, 4 subquadros misturados = motion blur, H.264 `yuv420p`, CRF 16 slow, `--gpu`) **só depois que o usuário validar o preview**.
 - Desenhe sempre em coordenadas lógicas (1920×1080); a resolução vem de `?res=`. Nada de tamanhos fixos em pixels de saída.
 - Fontes e imagens carregadas em `window.READY`; nunca dependa de rede durante o render (salve em `assets/`).
-- Primeiro quadro = último quadro, incluindo posição e velocidade do cursor.
+- Primeiro quadro = último quadro, incluindo posição e velocidade do cursor (salvo referência que não fecha em loop: aí a referência manda).
 - Nunca `will-change` em nada que a câmera aproxima (o texto fica borrado).
 
 ## Visual

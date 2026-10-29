@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# RENDER_ARGS=--gpu repassa flags ao render do teste de determinismo.
 # Vistas de crítica do vídeo renderizado (Lukas Margerie / Movez): o que a folha por batida não mostra.
 #   checks.sh <video.mp4> <pasta_saida> [t_acao_rapida=dur/3] [film.html]
 # Gera: strip.png (12 quadros seguidos em volta de uma ação rápida: pega pops e fantasmas de blur),
@@ -18,7 +19,7 @@ ffmpeg -loglevel error -y -ss "${POSTER_T:-$(awk "BEGIN{print $dur/2}")}" -i "$V
 echo "ok → $OUT: strip.png (t≈$T s) · phone.png · loop_check.mp4 · poster.png"
 if [ -n "$FILM" ]; then
   R="$(dirname "$0")/render.mjs"; tmp=$(mktemp -d)
-  for k in a b; do node "$R" "$FILM" --sheet "$tmp/$k.png" --times "$T" --res 540 >/dev/null; done
+  for k in a b; do node "$R" "$FILM" --sheet "$tmp/$k.png" --times "$T" --res 540 ${RENDER_ARGS:-} >/dev/null; done
   if cmp -s "$tmp/a-1.png" "$tmp/b-1.png"; then echo "determinismo ok (t=$T)"; else echo "DETERMINISMO FALHOU: t=$T muda entre renders (Math.random/Date/estado?)"; exit 3; fi
   rm -rf "$tmp"
 fi

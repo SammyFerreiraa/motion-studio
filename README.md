@@ -63,7 +63,8 @@ scripts/
   setup.sh        instala dependências (venv, Playwright)
   render.mjs      renderiza film.html em MP4 ou folha de contato
   brand.mjs       captura a marca de um site
-  ref.sh          baixa e fatia a referência; ref-dense.sh para 5 quadros/s
+  ref.sh          baixa e fatia a referência (opcional: só um trecho, ex. 0-20); ref-dense.sh para 5 quadros/s
+  lado-a-lado.sh  folha ref | filme, 1 par por segundo, para a nota de estrutura
   audio.py        trilha + SFX no BPM; events.mjs extrai os eventos do filme
   voice_sync.py   timestamps por palavra da voz gravada
   checks.sh       checagens de qualidade do vídeo renderizado
